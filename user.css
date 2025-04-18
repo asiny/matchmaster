@@ -1,0 +1,372 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap');
+
+/* Variables */
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #5c6bc0;
+    --accent-color: #ff5252;
+    --text-color: #f8f9fa;
+    --light-gray: rgba(255, 255, 255, 0.1);
+    --dark-gray: rgba(0, 0, 0, 0.2);
+    --gradient-start: #4a90e2;
+    --gradient-end: #5c6bc0;
+    --card-bg: rgba(16, 23, 41, 0.95);
+}
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #1a1a1a;
+    color: var(--text-color);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Navbar */
+.navbar {
+    background: transparent;
+    padding: 1.2rem 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.navbar.scrolled {
+    background: rgba(25, 25, 30, 0.95);
+    padding: 1rem 0;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.logo img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.logo span {
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.logo i {
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+/* Search Box */
+.search-box {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    padding: 0.5rem 1rem;
+    width: 300px;
+}
+
+.search-box input {
+    background: none;
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    width: 100%;
+    outline: none;
+}
+
+.search-box input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.search-box i {
+    color: rgba(255, 255, 255, 0.6);
+    margin-right: 0.5rem;
+}
+
+/* Profile Section */
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.profile-icon i {
+    font-size: 1.8rem;
+    color: white;
+}
+
+.profile-btn {
+    background: none;
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: rgba(35, 35, 40, 0.95);
+    border-radius: 10px;
+    padding: 0.5rem;
+    display: none;
+    min-width: 200px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-menu a {
+    color: white;
+    text-decoration: none;
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.dropdown-menu a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Main Content */
+.main-content {
+    padding-top: 100px;
+}
+
+.content-header {
+    margin-bottom: 3rem;
+}
+
+.content-header h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Stats Container */
+.stats-container {
+    background: rgba(35, 35, 40, 0.95);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stats-header {
+    margin-bottom: 2rem;
+}
+
+/* Stats Table */
+.stats-table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 80px 2fr 1fr 1.5fr;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(35, 35, 40, 0.95);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.header-cell {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.table-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 80px 2fr 1fr 1.5fr;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(35, 35, 40, 0.95);
+    border-radius: 8px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.table-row:hover {
+    transform: translateX(4px);
+    background: rgba(45, 45, 50, 0.95);
+}
+
+.cell {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.cell.rank {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.cell.user {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.cell.user img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.cell.matches {
+    justify-content: center;
+    font-weight: 500;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: width 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar .container {
+        padding: 1rem;
+    }
+
+    .search-box {
+        display: none;
+    }
+
+    .table-header,
+    .table-row {
+        grid-template-columns: 60px 1.5fr 1fr 1.2fr;
+        font-size: 0.8rem;
+        gap: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    .cell.user img {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar .container {
+        padding: 0.75rem;
+    }
+
+    .logo {
+        font-size: 1.6rem;
+    }
+
+    .logo img {
+        width: 45px;
+        height: 45px;
+    }
+
+    .logo span {
+        font-size: 1.6rem;
+    }
+
+    .container {
+        padding: 0 1rem;
+    }
+
+    .stats-container {
+        padding: 1rem;
+    }
+
+    .table-header,
+    .table-row {
+        grid-template-columns: 40px 1.2fr 0.8fr 1fr;
+        font-size: 0.75rem;
+        gap: 0.25rem;
+        padding: 0.5rem;
+    }
+
+    .cell.user {
+        gap: 0.5rem;
+    }
+
+    .cell.user img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .progress-bar {
+        height: 20px;
+    }
+
+    .progress {
+        font-size: 0.7rem;
+    }
+}

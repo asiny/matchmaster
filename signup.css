@@ -1,0 +1,286 @@
+/* Google Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+/* Global Styles */
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #5c6bc0;
+    --accent-color: #ff5252;
+    --text-color: #2c3e50;
+    --light-gray: #f5f7fa;
+    --dark-gray: #7f8c8d;
+    --gradient-start: #4a90e2;
+    --gradient-end: #5c6bc0;
+    --card-bg: rgb(35, 35, 35);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Navbar Styles */
+.navbar {
+    background: transparent;
+    padding: 1.2rem 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.navbar.scrolled {
+    background: rgba(25, 25, 30, 0.95);
+    padding: 1rem 0;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.logo img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.logo span {
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+/* Moving Logos Background */
+.moving-logos {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.06;
+    filter: blur(1px);
+}
+
+.logo-item {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: floatLogo 25s linear infinite;
+}
+
+@keyframes floatLogo {
+    0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    25% {
+        transform: translate(150px, 150px) rotate(90deg) scale(1.2);
+    }
+    50% {
+        transform: translate(300px, 0) rotate(180deg) scale(1);
+    }
+    75% {
+        transform: translate(150px, -150px) rotate(270deg) scale(1.2);
+    }
+    100% {
+        transform: translate(0, 0) rotate(360deg) scale(1);
+    }
+}
+
+/* Signup Container */
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.signup-box {
+    background: rgba(35, 35, 35, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 3rem;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.signup-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.signup-logo {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1rem;
+}
+
+.signup-header h2 {
+    color: white;
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 1rem 0;
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* Form Elements */
+h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Terms Checkbox */
+.terms {
+    margin: 0.5rem 0;
+}
+
+.terms label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.terms input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-top: 0.2rem;
+    accent-color: var(--primary-color);
+}
+
+/* Signup Button */
+.signup-btn {
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.signup-btn:hover {
+    background: #357abd;
+    transform: translateY(-2px);
+}
+
+/* Login Link */
+.login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+}
+
+.login-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .signup-box {
+        padding: 2rem;
+    }
+
+    .logo span {
+        font-size: 1.6rem;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    .terms label {
+        font-size: 0.8rem;
+    }
+} 

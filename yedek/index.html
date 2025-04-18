@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchMaster - Ana Sayfa</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        function handleLogoClick() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'homepage.html';
+            }
+        }
+
+        // Sayfa yüklendiğinde çalışacak fonksiyon
+        document.addEventListener('DOMContentLoaded', function() {
+            // Giriş kontrolü
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                window.location.href = 'homepage.html';
+                return;
+            }
+
+            // Kullanıcı adını güncelle
+            const username = localStorage.getItem('username') || 'Kullanıcı';
+            document.getElementById('username').textContent = username;
+        });
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('show');
+        }
+
+        function logout() {
+            // Giriş bilgilerini temizle
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            
+            // Beni hatırla seçili değilse email'i de temizle
+            if (localStorage.getItem('rememberMe') !== 'true') {
+                localStorage.removeItem('userEmail');
+            }
+            
+            // Ana sayfaya yönlendir
+            window.location.href = 'homepage.html';
+        }
+
+        // Menü dışına tıklandığında menüyü kapat
+        window.addEventListener('click', function(e) {
+            if (!e.target.matches('.profile-btn') && !e.target.matches('.profile-btn *')) {
+                const menu = document.getElementById('userMenu');
+                if (menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo" onclick="handleLogoClick()" style="cursor: pointer;">
+                <img src="logo.png" alt="MatchMaster Logo">
+                <span>MatchMaster</span>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Takım, lig veya maç ara...">
+            </div>
+
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-menu">
+                    <button class="profile-btn" onclick="toggleUserMenu()">
+                        <span id="username">Kullanıcı</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="profile.html"><i class="fas fa-user"></i> Profil</a>
+                        <a href="quiz.html"><i class="fas fa-question-circle"></i> Quiz</a>
+                        <a href="scoreboard.html"><i class="fas fa-trophy"></i> Skor Tablosu</a>
+                        <a href="favorites.html"><i class="fas fa-star"></i> Favoriler</a>
+                        <a href="settings.html"><i class="fas fa-cog"></i> Ayarlar</a>
+                        <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Content Header -->
+            <div class="content-header">
+                <div class="date-navigation">
+                    <button class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+                    <div class="date-picker">
+                        <span class="current-date">15 Ocak 2024</span>
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <button class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="matches-section">
+                <div class="league-tabs">
+                    <button class="league-tab active" data-league="champions-league">
+                        <img src="https://media-4.api-sports.io/football/leagues/2.png" alt="Champions League">
+                        Champions League
+                    </button>
+                    <button class="league-tab" data-league="europa-league">
+                        <img src="https://media-4.api-sports.io/football/leagues/3.png" alt="Europa League">
+                        Europa League
+                    </button>
+                    <button class="league-tab" data-league="premier-league">
+                        <img src="https://media-4.api-sports.io/football/leagues/39.png" alt="Premier League">
+                        Premier League
+                    </button>
+                    <button class="league-tab" data-league="la-liga">
+                        <img src="https://media-4.api-sports.io/football/leagues/140.png" alt="La Liga">
+                        La Liga
+                    </button>
+                    <button class="league-tab" data-league="bundesliga">
+                        <img src="https://media-4.api-sports.io/football/leagues/78.png" alt="Bundesliga">
+                        Bundesliga
+                    </button>
+                    <button class="league-tab" data-league="serie-a">
+                        <img src="https://media-4.api-sports.io/football/leagues/135.png" alt="Serie A">
+                        Serie A
+                    </button>
+                    <button class="league-tab" data-league="ligue-1">
+                        <img src="https://media-4.api-sports.io/football/leagues/61.png" alt="Ligue 1">
+                        Ligue 1
+                    </button>
+                </div>
+
+                <!-- Champions League Matches -->
+                <div class="league-matches active" id="champions-league">
+                    <div class="league-header">
+                        <div class="league-header-left">
+                            <img src="https://media-4.api-sports.io/football/leagues/2.png" alt="Champions League">
+                            <h3>UEFA Champions League</h3>
+                        </div>
+                        <div class="league-header-right">
+                            <div class="score-prediction">
+                                <span>Senin Skor Tahminin?</span>
+                            </div>
+                            <div class="sofascore-rating">
+                                <span>MatchMaster Analizleri</span>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="match-list">
+                        <!-- Match 1 -->
+                        <div class="match-card">
+                            <div class="match-time">22:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/40.png" alt="Liverpool">
+                                    <span>Liverpool</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/541.png" alt="Real Madrid">
+                                    <span>Real Madrid</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 45%"></div>
+                                        <div class="bar draw" style="width: 25%"></div>
+                                        <div class="bar away" style="width: 30%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>45%</span>
+                                        <span>25%</span>
+                                        <span>30%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 2 -->
+                        <div class="match-card">
+                            <div class="match-time">22:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/50.png" alt="Manchester City">
+                                    <span>Manchester City</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/529.png" alt="Barcelona">
+                                    <span>Barcelona</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 55%"></div>
+                                        <div class="bar draw" style="width: 25%"></div>
+                                        <div class="bar away" style="width: 20%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>55%</span>
+                                        <span>25%</span>
+                                        <span>20%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 3 -->
+                        <div class="match-card">
+                            <div class="match-time">19:45</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/489.png" alt="Bayern Munich">
+                                    <span>Bayern Munich</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/505.png" alt="Inter">
+                                    <span>Inter</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 58%"></div>
+                                        <div class="bar draw" style="width: 22%"></div>
+                                        <div class="bar away" style="width: 20%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>58%</span>
+                                        <span>22%</span>
+                                        <span>20%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 4 -->
+                        <div class="match-card">
+                            <div class="match-time">19:45</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/496.png" alt="Juventus">
+                                    <span>Juventus</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/85.png" alt="PSG">
+                                    <span>PSG</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 40%"></div>
+                                        <div class="bar draw" style="width: 30%"></div>
+                                        <div class="bar away" style="width: 30%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>40%</span>
+                                        <span>30%</span>
+                                        <span>30%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 5 -->
+                        <div class="match-card">
+                            <div class="match-time">22:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/42.png" alt="Arsenal">
+                                    <span>Arsenal</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/530.png" alt="Atletico Madrid">
+                                    <span>Atletico Madrid</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 48%"></div>
+                                        <div class="bar draw" style="width: 27%"></div>
+                                        <div class="bar away" style="width: 25%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>48%</span>
+                                        <span>27%</span>
+                                        <span>25%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 6 -->
+                        <div class="match-card">
+                            <div class="match-time">19:45</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/492.png" alt="Napoli">
+                                    <span>Napoli</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/548.png" alt="Real Sociedad">
+                                    <span>Real Sociedad</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 52%"></div>
+                                        <div class="bar draw" style="width: 28%"></div>
+                                        <div class="bar away" style="width: 20%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>52%</span>
+                                        <span>28%</span>
+                                        <span>20%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 7 -->
+                        <div class="match-card">
+                            <div class="match-time">22:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/33.png" alt="Manchester United">
+                                    <span>Manchester United</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/157.png" alt="Bayern Leverkusen">
+                                    <span>Bayern Leverkusen</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 50%"></div>
+                                        <div class="bar draw" style="width: 25%"></div>
+                                        <div class="bar away" style="width: 25%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>50%</span>
+                                        <span>25%</span>
+                                        <span>25%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 8 -->
+                        <div class="match-card">
+                            <div class="match-time">19:45</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/497.png" alt="AS Roma">
+                                    <span>AS Roma</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/212.png" alt="FC Porto">
+                                    <span>FC Porto</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 47%"></div>
+                                        <div class="bar draw" style="width: 28%"></div>
+                                        <div class="bar away" style="width: 25%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>47%</span>
+                                        <span>28%</span>
+                                        <span>25%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 9 -->
+                        <div class="match-card">
+                            <div class="match-time">22:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/165.png" alt="Borussia Dortmund">
+                                    <span>Borussia Dortmund</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/499.png" alt="AC Milan">
+                                    <span>AC Milan</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 49%"></div>
+                                        <div class="bar draw" style="width: 26%"></div>
+                                        <div class="bar away" style="width: 25%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>49%</span>
+                                        <span>26%</span>
+                                        <span>25%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 10 -->
+                        <div class="match-card">
+                            <div class="match-time">19:45</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/194.png" alt="Benfica">
+                                    <span>Benfica</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/530.png" alt="RB Leipzig">
+                                    <span>RB Leipzig</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 45%"></div>
+                                        <div class="bar draw" style="width: 30%"></div>
+                                        <div class="bar away" style="width: 25%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>45%</span>
+                                        <span>30%</span>
+                                        <span>25%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- La Liga Matches -->
+                <div class="league-matches" id="la-liga">
+                    <div class="league-header">
+                        <img src="https://media-4.api-sports.io/football/leagues/140.png" alt="La Liga">
+                        <h3>La Liga</h3>
+                        <div class="sofascore-rating">
+                            <span>Sofascore Reytingleri</span>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+
+                    <div class="match-list">
+                        <!-- Match 1 -->
+                        <div class="match-card">
+                            <div class="match-time">21:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/541.png" alt="Real Madrid">
+                                    <span>Real Madrid</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/529.png" alt="Barcelona">
+                                    <span>Barcelona</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 45%"></div>
+                                        <div class="bar draw" style="width: 25%"></div>
+                                        <div class="bar away" style="width: 30%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>45%</span>
+                                        <span>25%</span>
+                                        <span>30%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 2 -->
+                        <div class="match-card">
+                            <div class="match-time">19:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/530.png" alt="Atletico Madrid">
+                                    <span>Atletico Madrid</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/536.png" alt="Sevilla">
+                                    <span>Sevilla</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 55%"></div>
+                                        <div class="bar draw" style="width: 25%"></div>
+                                        <div class="bar away" style="width: 20%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>55%</span>
+                                        <span>25%</span>
+                                        <span>20%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 3 -->
+                        <div class="match-card">
+                            <div class="match-time">17:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/532.png" alt="Valencia">
+                                    <span>Valencia</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/533.png" alt="Villarreal">
+                                    <span>Villarreal</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 42%"></div>
+                                        <div class="bar draw" style="width: 33%"></div>
+                                        <div class="bar away" style="width: 25%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>42%</span>
+                                        <span>33%</span>
+                                        <span>25%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 4 -->
+                        <div class="match-card">
+                            <div class="match-time">15:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/543.png" alt="Real Betis">
+                                    <span>Real Betis</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/546.png" alt="Getafe">
+                                    <span>Getafe</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 58%"></div>
+                                        <div class="bar draw" style="width: 24%"></div>
+                                        <div class="bar away" style="width: 18%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>58%</span>
+                                        <span>24%</span>
+                                        <span>18%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 5 -->
+                        <div class="match-card">
+                            <div class="match-time">15:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/548.png" alt="Real Sociedad">
+                                    <span>Real Sociedad</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/531.png" alt="Athletic Club">
+                                    <span>Athletic Club</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 45%"></div>
+                                        <div class="bar draw" style="width: 30%"></div>
+                                        <div class="bar away" style="width: 25%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>45%</span>
+                                        <span>30%</span>
+                                        <span>25%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 6 -->
+                        <div class="match-card">
+                            <div class="match-time">15:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/547.png" alt="Girona">
+                                    <span>Girona</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/542.png" alt="Alaves">
+                                    <span>Alaves</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 52%"></div>
+                                        <div class="bar draw" style="width: 28%"></div>
+                                        <div class="bar away" style="width: 20%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>52%</span>
+                                        <span>28%</span>
+                                        <span>20%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 7 -->
+                        <div class="match-card">
+                            <div class="match-time">15:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/545.png" alt="Eibar">
+                                    <span>Eibar</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/539.png" alt="Levante">
+                                    <span>Levante</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 48%"></div>
+                                        <div class="bar draw" style="width: 27%"></div>
+                                        <div class="bar away" style="width: 25%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>48%</span>
+                                        <span>27%</span>
+                                        <span>25%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 8 -->
+                        <div class="match-card">
+                            <div class="match-time">15:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/538.png" alt="Celta Vigo">
+                                    <span>Celta Vigo</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/537.png" alt="Cadiz">
+                                    <span>Cadiz</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 53%"></div>
+                                        <div class="bar draw" style="width: 27%"></div>
+                                        <div class="bar away" style="width: 20%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>53%</span>
+                                        <span>27%</span>
+                                        <span>20%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 9 -->
+                        <div class="match-card">
+                            <div class="match-time">15:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/544.png" alt="Mallorca">
+                                    <span>Mallorca</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/540.png" alt="Espanyol">
+                                    <span>Espanyol</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 47%"></div>
+                                        <div class="bar draw" style="width: 28%"></div>
+                                        <div class="bar away" style="width: 25%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>47%</span>
+                                        <span>28%</span>
+                                        <span>25%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Match 10 -->
+                        <div class="match-card">
+                            <div class="match-time">15:00</div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/534.png" alt="Osasuna">
+                                    <span>Osasuna</span>
+                                </div>
+                                <span class="vs">-</span>
+                                <div class="team">
+                                    <img src="https://media-4.api-sports.io/football/teams/535.png" alt="Rayo Vallecano">
+                                    <span>Rayo Vallecano</span>
+                                </div>
+                            </div>
+                            <div class="score-inputs">
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <span class="score-separator">-</span>
+                                <input type="number" class="score-input" min="0" max="99" placeholder="0">
+                                <button class="confirm-prediction">
+                                    <i class="fas fa-check"></i>
+                                    Onayla
+                                </button>
+                            </div>
+                            <div class="ai-prediction">
+                                <i class="fas fa-robot"></i>
+                                <div class="prediction-details">
+                                    <div class="prediction-bar">
+                                        <div class="bar home" style="width: 50%"></div>
+                                        <div class="bar draw" style="width: 30%"></div>
+                                        <div class="bar away" style="width: 20%"></div>
+                                    </div>
+                                    <div class="prediction-percentages">
+                                        <span>50%</span>
+                                        <span>30%</span>
+                                        <span>20%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="favorite-btn">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="logo.png" alt="MatchMaster Logo">
+                    MatchMaster
+                </div>
+                <div class="footer-links">
+                    <a href="#">Hakkımızda</a>
+                    <a href="#">İletişim</a>
+                    <a href="#">Gizlilik Politikası</a>
+                    <a href="#">Kullanım Şartları</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // League tabs functionality
+            const leagueTabs = document.querySelectorAll('.league-tab');
+            leagueTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and content
+                    leagueTabs.forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.league-matches').forEach(content => {
+                        content.classList.remove('active');
+                    });
+
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const leagueId = tab.getAttribute('data-league');
+                    document.getElementById(leagueId).classList.add('active');
+                });
+            });
+        });
+
+        // Scroll behavior for navbar
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

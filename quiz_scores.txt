@@ -1,0 +1,16 @@
+[
+  {
+    "username": "admin",
+    "scores": [
+      {
+        "date": "2024-04-18T10:45:02.623Z",
+        "score": 100,
+        "totalQuestions": 3,
+        "correctAnswers": 3
+      }
+    ],
+    "totalScore": 100,
+    "averageScore": 100,
+    "quizzesTaken": 1
+  }
+] 

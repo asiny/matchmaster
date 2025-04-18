@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchMaster - Futbol Bilgi Yarışması</title>
+    <link rel="stylesheet" href="quiz.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        function handleLogoClick() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'homepage.html';
+            }
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('show');
+        }
+
+        async function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('rememberMe');
+            window.location.href = 'homepage.html';
+        }
+
+        // Quiz fonksiyonları
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [
+            {
+                question: "2023 UEFA Şampiyonlar Ligi şampiyonu hangi takımdır?",
+                options: ["Manchester City", "Inter", "Real Madrid", "Bayern Munich"],
+                correctAnswer: 0
+            },
+            {
+                question: "Türkiye Süper Lig'de en çok şampiyonluğu olan takım hangisidir?",
+                options: ["Galatasaray", "Fenerbahçe", "Beşiktaş", "Trabzonspor"],
+                correctAnswer: 0
+            },
+            {
+                question: "Futbol tarihinde en çok Ballon d'Or ödülü kazanan oyuncu kimdir?",
+                options: ["Cristiano Ronaldo", "Lionel Messi", "Michel Platini", "Johan Cruyff"],
+                correctAnswer: 1
+            }
+        ];
+
+        function startQuiz() {
+            document.getElementById('quiz-intro').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const questionData = questions[currentQuestionIndex];
+            const quizContainer = document.getElementById('quiz-container');
+            
+            quizContainer.innerHTML = `
+                <div class="question-card">
+                    <div class="question-number">Soru ${currentQuestionIndex + 1}/${questions.length}</div>
+                    <h2>${questionData.question}</h2>
+                    <div class="options-container">
+                        ${questionData.options.map((option, index) => `
+                            <button class="option-btn" onclick="checkAnswer(${index})">
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkAnswer(selectedAnswer) {
+            const correctAnswer = questions[currentQuestionIndex].correctAnswer;
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Tüm butonları devre dışı bırak
+            optionButtons.forEach(button => button.disabled = true);
+            
+            // Doğru ve yanlış cevapları göster
+            optionButtons[correctAnswer].classList.add('correct');
+            if (selectedAnswer !== correctAnswer) {
+                optionButtons[selectedAnswer].classList.add('wrong');
+            } else {
+                score++;
+            }
+
+            // Sonraki soruya geçmek için zamanlayıcı
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            }, 1500);
+        }
+
+        async function saveQuizScore(score, totalQuestions, correctAnswers) {
+            try {
+                const username = localStorage.getItem('username');
+                if (!username) {
+                    console.error('Kullanıcı girişi yapılmamış');
+                    return;
+                }
+
+                // Quiz_scores.txt'den mevcut skorları oku
+                const response = await fetch('quiz_scores.txt');
+                const text = await response.text();
+                const scores = JSON.parse(text || '[]');
+
+                // Kullanıcının mevcut skorlarını bul
+                let userScores = scores.find(s => s.username === username);
+
+                // Yeni skor objesi
+                const newScore = {
+                    date: new Date().toISOString(),
+                    score: score,
+                    totalQuestions: totalQuestions,
+                    correctAnswers: correctAnswers
+                };
+
+                if (userScores) {
+                    // Mevcut kullanıcının skorlarını güncelle
+                    userScores.scores.push(newScore);
+                    userScores.totalScore += score;
+                    userScores.quizzesTaken += 1;
+                    userScores.averageScore = Math.round(userScores.totalScore / userScores.quizzesTaken);
+                } else {
+                    // Yeni kullanıcı skoru oluştur
+                    userScores = {
+                        username: username,
+                        scores: [newScore],
+                        totalScore: score,
+                        averageScore: score,
+                        quizzesTaken: 1
+                    };
+                    scores.push(userScores);
+                }
+
+                // Quiz_scores.txt'yi güncelle
+                const blob = new Blob([JSON.stringify(scores, null, 2)], { type: 'text/plain' });
+                const formData = new FormData();
+                formData.append('file', blob, 'quiz_scores.txt');
+
+                await fetch('/save-quiz-scores', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                return userScores;
+            } catch (error) {
+                console.error('Quiz skoru kaydedilirken hata oluştu:', error);
+                return null;
+            }
+        }
+
+        function showResults() {
+            const quizContainer = document.getElementById('quiz-container');
+            const percentage = (score / questions.length) * 100;
+            
+            // Skoru kaydet ve sonuçları göster
+            saveQuizScore(percentage, questions.length, score).then(userScores => {
+                let statsHtml = '';
+                if (userScores) {
+                    statsHtml = `
+                        <div class="quiz-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-trophy"></i>
+                                <span>Toplam Puan: ${userScores.totalScore}</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Ortalama: ${userScores.averageScore}%</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-tasks"></i>
+                                <span>Quiz Sayısı: ${userScores.quizzesTaken}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                quizContainer.innerHTML = `
+                    <div class="results-card">
+                        <h2>Quiz Tamamlandı!</h2>
+                        <div class="score-container">
+                            <div class="score-circle">
+                                <span class="score-number">${percentage}%</span>
+                            </div>
+                            <p>Toplam ${questions.length} sorudan ${score} tanesini doğru cevapladınız.</p>
+                        </div>
+                        ${statsHtml}
+                        <div class="result-buttons">
+                            <button onclick="restartQuiz()" class="restart-btn">
+                                <i class="fas fa-redo"></i> Tekrar Dene
+                            </button>
+                            <button onclick="window.location.href='index.html'" class="home-btn">
+                                <i class="fas fa-home"></i> Ana Sayfa
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            showQuestion();
+        }
+
+        // Mevcut script içeriğine eklenecek yeni fonksiyon
+        async function loadQuizStats() {
+            try {
+                const username = localStorage.getItem('username');
+                if (!username) return;
+
+                const response = await fetch('quiz_scores.txt');
+                const text = await response.text();
+                const scores = JSON.parse(text || '[]');
+                
+                const userStats = scores.find(s => s.username === username);
+                if (!userStats) return;
+
+                // İstatistikleri güncelle
+                document.getElementById('totalScore').textContent = userStats.totalScore;
+                document.getElementById('averageScore').textContent = userStats.averageScore + '%';
+                document.getElementById('quizzesTaken').textContent = userStats.quizzesTaken;
+
+                // Son quiz sonuçlarını göster
+                const quizHistory = document.getElementById('quizHistory');
+                const recentScores = userStats.scores.slice(-5).reverse(); // Son 5 quiz
+
+                quizHistory.innerHTML = recentScores.map(score => `
+                    <div class="quiz-result-item">
+                        <div class="quiz-result-date">
+                            ${new Date(score.date).toLocaleDateString('tr-TR')}
+                        </div>
+                        <div class="quiz-result-score">
+                            <span class="score-label">Başarı:</span>
+                            <span class="score-value">${score.score}%</span>
+                        </div>
+                        <div class="quiz-result-details">
+                            <span>${score.correctAnswers}/${score.totalQuestions} Doğru</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Quiz istatistikleri yüklenirken hata:', error);
+            }
+        }
+
+        // Sayfa yüklendiğinde çalışacak fonksiyonlar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Kullanıcı giriş kontrolü
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Kullanıcı adını güncelle
+            const username = localStorage.getItem('username');
+            if (username) {
+                document.getElementById('username').textContent = username;
+            }
+
+            // Navbar scroll efekti
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Quiz istatistiklerini yükle
+            loadQuizStats();
+        });
+    </script>
+</head>
+<body>
+    <div class="moving-logos"></div>
+    <nav class="navbar">
+        <div class="container">
+            <!-- Logo -->
+            <div class="logo" onclick="handleLogoClick()" style="cursor: pointer;">
+                <img src="logo.png" alt="MatchMaster Logo">
+                <span>MatchMaster</span>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Takım, lig veya maç ara...">
+            </div>
+
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-menu">
+                    <button class="profile-btn" onclick="toggleUserMenu()">
+                        <span id="username">Kullanıcı</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="profile.html"><i class="fas fa-user"></i> Profil</a>
+                        <a href="quiz.html"><i class="fas fa-question-circle"></i> Quiz</a>
+                        <a href="scoreboard.html"><i class="fas fa-trophy"></i> Skor Tablosu</a>
+                        <a href="favorites.html"><i class="fas fa-star"></i> Favoriler</a>
+                        <a href="settings.html"><i class="fas fa-cog"></i> Ayarlar</a>
+                        <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Quiz Stats Section -->
+            <div class="quiz-stats-section">
+                <div class="stats-card">
+                    <h2>Quiz İstatistikleriniz</h2>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <i class="fas fa-trophy"></i>
+                            <div class="stat-info">
+                                <span class="stat-label">Toplam Puan</span>
+                                <span class="stat-value" id="totalScore">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-chart-line"></i>
+                            <div class="stat-info">
+                                <span class="stat-label">Ortalama Başarı</span>
+                                <span class="stat-value" id="averageScore">0%</span>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-tasks"></i>
+                            <div class="stat-info">
+                                <span class="stat-label">Tamamlanan Quiz</span>
+                                <span class="stat-value" id="quizzesTaken">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recent-quizzes">
+                        <h3>Son Quiz Sonuçları</h3>
+                        <div class="quiz-history" id="quizHistory">
+                            <!-- Quiz geçmişi buraya dinamik olarak eklenecek -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Intro Section -->
+            <div id="quiz-intro" class="quiz-intro">
+                <div class="intro-card">
+                    <h1>Futbol Bilgi Yarışması</h1>
+                    <p>Futbol bilginizi test etmeye hazır mısınız? Bu quiz'de güncel ve tarihi futbol sorularıyla karşılaşacaksınız.</p>
+                    <div class="quiz-info">
+                        <div class="info-item">
+                            <i class="fas fa-question-circle"></i>
+                            <span>3 Soru</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            <span>5 Dakika</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-trophy"></i>
+                            <span>100 Puan</span>
+                        </div>
+                    </div>
+                    <button onclick="startQuiz()" class="start-btn">
+                        <i class="fas fa-play"></i> Quiz'e Başla
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quiz-container" class="quiz-container" style="display: none;">
+                <!-- Sorular burada dinamik olarak gösterilecek -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="logo.png" alt="MatchMaster Logo">
+                    MatchMaster
+                </div>
+                <div class="footer-links">
+                    <a href="#">Hakkımızda</a>
+                    <a href="#">İletişim</a>
+                    <a href="#">Gizlilik Politikası</a>
+                    <a href="#">Kullanım Şartları</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Moving logos background
+        document.addEventListener('DOMContentLoaded', function() {
+            const teamLogos = [
+                'https://media-4.api-sports.io/football/teams/40.png',  // Liverpool
+                'https://media-4.api-sports.io/football/teams/33.png',  // Manchester United
+                'https://media-4.api-sports.io/football/teams/42.png',  // Arsenal
+                'https://media-4.api-sports.io/football/teams/49.png',  // Chelsea
+                'https://media-4.api-sports.io/football/teams/50.png',  // Manchester City
+                'https://media-4.api-sports.io/football/teams/47.png',  // Tottenham
+                'https://media-4.api-sports.io/football/teams/541.png', // Real Madrid
+                'https://media-4.api-sports.io/football/teams/529.png', // Barcelona
+                'https://media-4.api-sports.io/football/teams/530.png', // Atletico Madrid
+                'https://media-4.api-sports.io/football/teams/489.png'  // Bayern Munich
+            ];
+
+            const movingLogosContainer = document.querySelector('.moving-logos');
+
+            function createLogo(logoUrl) {
+                const logo = document.createElement('img');
+                logo.src = logoUrl;
+                logo.classList.add('logo-item');
+                
+                // Random position
+                logo.style.left = Math.random() * 100 + '%';
+                logo.style.top = Math.random() * 100 + '%';
+                
+                // Random animation delay and duration
+                logo.style.animationDelay = Math.random() * 5 + 's';
+                logo.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                
+                return logo;
+            }
+
+            // Create two instances of each logo
+            teamLogos.forEach(logoUrl => {
+                movingLogosContainer.appendChild(createLogo(logoUrl));
+                movingLogosContainer.appendChild(createLogo(logoUrl));
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchMaster - Yapay Zeka Destekli Maç Analizi</title>
+    <link rel="stylesheet" href="homepage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        function handleLogoClick() {
+            // localStorage'dan login durumunu kontrol et
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            // Giriş durumuna göre yönlendirme yap
+            if (isLoggedIn) {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'homepage.html';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="moving-logos"></div>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo" onclick="handleLogoClick()" style="cursor: pointer;">
+                <img src="logo.png" alt="MatchMaster Logo">
+                <span>MatchMaster</span>
+            </div>
+            <div class="auth-buttons">
+                <button class="login-btn" onclick="window.location.href='login.html'">Giriş Yap</button>
+                <button class="signup-btn" onclick="window.location.href='signup.html'">Kayıt Ol</button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <div class="title-container">
+                        <div class="header-part">
+                            <div class="title-part">
+                                <span class="gradient-text">MATCH</span>
+                                <span class="gradient-text">MASTER</span>
+                            </div>
+                            <div class="hero-logo">
+                                <img src="logo.png" alt="MatchMaster Logo">
+                            </div>
+                        </div>
+                        <div class="slogan-container">
+                            <span class="gradient-text">YAPAY ZEKA</span>
+                            <span class="gradient-text">TEKNOLOJİSİ</span>
+                            <span class="gradient-text">FUTBOLUN</span>
+                            <span class="gradient-text">GELECEĞİ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Chart -->
+            <div class="stats-chart">
+                <div class="stats-tabs">
+                    <button class="tab-btn active" data-tab="overall">Genel İstatistikler</button>
+                    <button class="tab-btn" data-tab="weekly">Geçen Hafta</button>
+                </div>
+
+                <div class="stats-content">
+                    <!-- Overall Stats -->
+                    <div class="stats-panel active" id="overall">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <i class="fas fa-chart-line"></i>
+                                <div class="stat-info">
+                                    <h3>Analiz Edilen Maç</h3>
+                                    <span class="stat-number">15,423</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-bullseye"></i>
+                                <div class="stat-info">
+                                    <h3>Başarı Oranı</h3>
+                                    <span class="stat-number">84.7%</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-users"></i>
+                                <div class="stat-info">
+                                    <h3>Takipçi Sayısı</h3>
+                                    <span class="stat-number">127,856</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Stats -->
+                    <div class="stats-panel" id="weekly">
+                        <div class="weekly-stats">
+                            <div class="weekly-summary">
+                                <div class="summary-card">
+                                    <h3>Haftalık Performans</h3>
+                                    <div class="summary-stats">
+                                        <div class="summary-item">
+                                            <i class="fas fa-chart-bar"></i>
+                                            <span class="label">Analiz Edilen Maç</span>
+                                            <span class="value">342</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <i class="fas fa-percentage"></i>
+                                            <span class="label">Başarı Oranı</span>
+                                            <span class="value">86.2%</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <i class="fas fa-star"></i>
+                                            <span class="label">Değerlendirme Sayısı</span>
+                                            <span class="value">15,234</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="league-charts">
+                <!-- Premier League Chart -->
+                <div class="league-chart">
+                    <h2 class="league-title">
+                        <i class="fas fa-trophy"></i>
+                        Premier League
+                    </h2>
+                    <div class="match-list">
+                        <div class="match-item">
+                            <div class="match-time">20:30</div>
+                            <div class="match-teams">
+                                <span>Manchester City</span>
+                                <span>Liverpool</span>
+                            </div>
+                            <div class="match-prediction">
+                                Maç Skor Analizi: <span class="prediction-blur">%72.5 Ev Sahibi</span>
+                                <div class="login-prompt" onclick="window.location.href='login.html'">
+                                    Tahminleri görmek için giriş yapın
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-item">
+                            <div class="match-time">22:45</div>
+                            <div class="match-teams">
+                                <span>Arsenal</span>
+                                <span>Chelsea</span>
+                            </div>
+                            <div class="match-prediction">
+                                Maç Skor Analizi: <span class="prediction-blur">%55.8 Beraberlik</span>
+                                <div class="login-prompt" onclick="window.location.href='login.html'">
+                                    Tahminleri görmek için giriş yapın
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-item">
+                            <div class="match-time">23:00</div>
+                            <div class="match-teams">
+                                <span>Newcastle</span>
+                                <span>Tottenham</span>
+                            </div>
+                            <div class="match-prediction">
+                                Maç Skor Analizi: <span class="prediction-blur">%68.3 Deplasman</span>
+                                <div class="login-prompt" onclick="window.location.href='login.html'">
+                                    Tahminleri görmek için giriş yapın
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-item">
+                            <div class="match-time">21:15</div>
+                            <div class="match-teams">
+                                <span>Man United</span>
+                                <span>Brighton</span>
+                            </div>
+                            <div class="match-prediction">
+                                Maç Skor Analizi: <span class="prediction-blur">%61.2 Ev Sahibi</span>
+                                <div class="login-prompt" onclick="window.location.href='login.html'">
+                                    Tahminleri görmek için giriş yapın
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-item">
+                            <div class="match-time">20:00</div>
+                            <div class="match-teams">
+                                <span>Aston Villa</span>
+                                <span>West Ham</span>
+                            </div>
+                            <div class="match-prediction">
+                                Maç Skor Analizi: <span class="prediction-blur">%58.9 Ev Sahibi</span>
+                                <div class="login-prompt" onclick="window.location.href='login.html'">
+                                    Tahminleri görmek için giriş yapın
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- La Liga Chart -->
+                <div class="league-chart">
+                    <h2 class="league-title">
+                        <i class="fas fa-trophy"></i>
+                        La Liga
+                    </h2>
+                    <div class="match-list">
+                        <div class="match-item">
+                            <div class="match-time">21:00</div>
+                            <div class="match-teams">
+                                <span>Real Madrid</span>
+                                <span>Barcelona</span>
+                            </div>
+                            <div class="match-prediction">
+                                Maç Skor Analizi: <span class="prediction-blur">%65.7 Ev Sahibi</span>
+                                <div class="login-prompt" onclick="window.location.href='login.html'">
+                                    Tahminleri görmek için giriş yapın
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-item">
+                            <div class="match-time">23:15</div>
+                            <div class="match-teams">
+                                <span>Atletico Madrid</span>
+                                <span>Sevilla</span>
+                            </div>
+                            <div class="match-prediction">
+                                Maç Skor Analizi: <span class="prediction-blur">%59.4 Ev Sahibi</span>
+                                <div class="login-prompt" onclick="window.location.href='login.html'">
+                                    Tahminleri görmek için giriş yapın
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-item">
+                            <div class="match-time">20:30</div>
+                            <div class="match-teams">
+                                <span>Valencia</span>
+                                <span>Athletic Bilbao</span>
+                            </div>
+                            <div class="match-prediction">
+                                Maç Skor Analizi: <span class="prediction-blur">%52.1 Beraberlik</span>
+                                <div class="login-prompt" onclick="window.location.href='login.html'">
+                                    Tahminleri görmek için giriş yapın
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-item">
+                            <div class="match-time">22:00</div>
+                            <div class="match-teams">
+                                <span>Real Sociedad</span>
+                                <span>Villarreal</span>
+                            </div>
+                            <div class="match-prediction">
+                                Maç Skor Analizi: <span class="prediction-blur">%63.8 Ev Sahibi</span>
+                                <div class="login-prompt" onclick="window.location.href='login.html'">
+                                    Tahminleri görmek için giriş yapın
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-item">
+                            <div class="match-time">19:45</div>
+                            <div class="match-teams">
+                                <span>Real Betis</span>
+                                <span>Osasuna</span>
+                            </div>
+                            <div class="match-prediction">
+                                Maç Skor Analizi: <span class="prediction-blur">%57.2 Ev Sahibi</span>
+                                <div class="login-prompt" onclick="window.location.href='login.html'">
+                                    Tahminleri görmek için giriş yapın
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- News Chart -->
+        <div class="news-chart">
+            <h2 class="news-title">
+                <i class="fas fa-newspaper"></i>
+                Haftanın Futbol Haberleri
+            </h2>
+            <div class="news-list">
+                <div class="news-item">
+                    <div class="news-image">
+                        <img src="https://via.placeholder.com/120x80" alt="Haber Görseli">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <span class="news-date">15 Ocak 2024</span>
+                            <span class="news-category">Premier League</span>
+                        </div>
+                        <h3 class="news-headline">Manchester City'nin Yıldızı Kevin De Bruyne Sahalara Geri Dönüyor</h3>
+                        <p class="news-excerpt">Uzun süredir sakatlığı devam eden Belçikalı yıldız, takımla antrenmanlara başladı...</p>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-image">
+                        <img src="https://via.placeholder.com/120x80" alt="Haber Görseli">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <span class="news-date">14 Ocak 2024</span>
+                            <span class="news-category">La Liga</span>
+                        </div>
+                        <h3 class="news-headline">Real Madrid'in Genç Yıldızı Bellingham Gol Krallığı Yarışında Zirvede</h3>
+                        <p class="news-excerpt">İngiliz futbolcu, La Liga'da gösterdiği performansla göz doldurmaya devam ediyor...</p>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-image">
+                        <img src="https://via.placeholder.com/120x80" alt="Haber Görseli">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <span class="news-date">13 Ocak 2024</span>
+                            <span class="news-category">Transfer</span>
+                        </div>
+                        <h3 class="news-headline">Liverpool'dan Sürpriz Transfer Hamlesi</h3>
+                        <p class="news-excerpt">Kırmızılar, orta saha için dünyaca ünlü yıldızla görüşmelere başladı...</p>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-image">
+                        <img src="https://via.placeholder.com/120x80" alt="Haber Görseli">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <span class="news-date">12 Ocak 2024</span>
+                            <span class="news-category">Bundesliga</span>
+                        </div>
+                        <h3 class="news-headline">Bayern Münih'te Teknik Direktör Arayışları Sürüyor</h3>
+                        <p class="news-excerpt">Alman devi, sezon sonunda göreve gelecek teknik adam için görüşmelerini sürdürüyor...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-chart-line"></i>
+                    MatchMaster
+                </div>
+                <div class="footer-links">
+                    <a href="#">Hakkımızda</a>
+                    <a href="#">İletişim</a>
+                    <a href="#">Gizlilik Politikası</a>
+                    <a href="#">Kullanım Şartları</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll behavior for navbar
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Stats tabs functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const statsPanels = document.querySelectorAll('.stats-panel');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons and panels
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    statsPanels.forEach(p => p.classList.remove('active'));
+
+                    // Add active class to clicked button and corresponding panel
+                    this.classList.add('active');
+                    document.getElementById(this.dataset.tab).classList.add('active');
+                });
+            });
+        });
+
+        // Moving Logos Background
+        document.addEventListener('DOMContentLoaded', function() {
+            const movingLogos = document.querySelector('.moving-logos');
+            const teamLogos = [
+                'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg',
+                'https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg',
+                'https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg',
+                'https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg',
+                'https://upload.wikimedia.org/wikipedia/en/b/b4/Tottenham_Hotspur.svg',
+                'https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg',
+                'https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg',
+                'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg',
+                'https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg',
+                'https://upload.wikimedia.org/wikipedia/commons/f/f1/2014_Juventus_FC_logo.svg',
+                'https://upload.wikimedia.org/wikipedia/en/f/f1/FC_Bayern_Munich_logo_%282017%29.svg',
+                'https://upload.wikimedia.org/wikipedia/commons/0/05/FC_Internazionale_Milano_2021.svg'
+            ];
+
+            function createLogo(logoUrl) {
+                const logo = document.createElement('div');
+                logo.className = 'logo-item';
+                logo.style.backgroundImage = `url(${logoUrl})`;
+                logo.style.left = `${Math.random() * 100}vw`;
+                logo.style.top = `${Math.random() * 100}vh`;
+                logo.style.animationDelay = `${Math.random() * 10}s`;
+                logo.style.animationDuration = `${15 + Math.random() * 15}s`;
+                return logo;
+            }
+
+            // Create multiple instances of each logo
+            teamLogos.forEach(logo => {
+                for (let i = 0; i < 4; i++) {
+                    const logoElement = createLogo(logo);
+                    // Add random initial position and movement direction
+                    logoElement.style.transform = `translate(${Math.random() * window.innerWidth}px, ${Math.random() * window.innerHeight}px)`;
+                    movingLogos.appendChild(logoElement);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

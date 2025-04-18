@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchMaster - Kullanıcı İstatistikleri</title>
+    <link rel="stylesheet" href="user.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <!-- Logo -->
+            <div class="logo">
+                <img src="logo.png" alt="MatchMaster Logo">
+                <span>MatchMaster</span>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Kullanıcı ara...">
+            </div>
+
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-menu">
+                    <button class="profile-btn" onclick="toggleUserMenu()">
+                        <span id="username">Kullanıcı</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="profile.html"><i class="fas fa-user"></i> Profil</a>
+                        <a href="favorites.html"><i class="fas fa-star"></i> Favoriler</a>
+                        <a href="settings.html"><i class="fas fa-cog"></i> Ayarlar</a>
+                        <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Content Header -->
+            <div class="content-header">
+                <h2>Kullanıcı Sıralaması</h2>
+            </div>
+
+            <!-- Stats Container -->
+            <div class="stats-container">
+                <!-- Stats Table -->
+                <div class="stats-table">
+                    <div class="table-header">
+                        <div class="header-cell rank">#</div>
+                        <div class="header-cell user">Kullanıcı</div>
+                        <div class="header-cell matches">Analiz</div>
+                        <div class="header-cell success">Başarı</div>
+                    </div>
+
+                    <div class="table-body">
+                        <!-- Top 10 Users -->
+                        <div class="table-row">
+                            <div class="cell rank">1</div>
+                            <div class="cell user">
+                                <img src="https://ui-avatars.com/api/?name=N&background=random" alt="Avatar">
+                                <span>Nedim Alpdemir</span>
+                            </div>
+                            <div class="cell matches">248</div>
+                            <div class="cell success">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 92%">92%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="cell rank">2</div>
+                            <div class="cell user">
+                                <img src="https://ui-avatars.com/api/?name=S&background=random" alt="Avatar">
+                                <span>Sarper Alkan</span>
+                            </div>
+                            <div class="cell matches">312</div>
+                            <div class="cell success">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 88%">88%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="cell rank">3</div>
+                            <div class="cell user">
+                                <img src="https://ui-avatars.com/api/?name=H&background=random" alt="Avatar">
+                                <span>Hasan Karaaslan</span>
+                            </div>
+                            <div class="cell matches">186</div>
+                            <div class="cell success">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 85%">85%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="cell rank">4</div>
+                            <div class="cell user">
+                                <img src="https://ui-avatars.com/api/?name=E&background=random" alt="Avatar">
+                                <span>Emre Kağan Aytekin</span>
+                            </div>
+                            <div class="cell matches">423</div>
+                            <div class="cell success">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 82%">82%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="cell rank">5</div>
+                            <div class="cell user">
+                                <img src="https://ui-avatars.com/api/?name=C&background=random" alt="Avatar">
+                                <span>Cansu Yörük</span>
+                            </div>
+                            <div class="cell matches">156</div>
+                            <div class="cell success">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 80%">80%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="cell rank">6</div>
+                            <div class="cell user">
+                                <img src="https://ui-avatars.com/api/?name=U&background=random" alt="Avatar">
+                                <span>Uğur Can Bayrak</span>
+                            </div>
+                            <div class="cell matches">289</div>
+                            <div class="cell success">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 78%">78%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="cell rank">7</div>
+                            <div class="cell user">
+                                <img src="https://ui-avatars.com/api/?name=Y&background=random" alt="Avatar">
+                                <span>Yasin Aydemir</span>
+                            </div>
+                            <div class="cell matches">178</div>
+                            <div class="cell success">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 76%">76%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="cell rank">8</div>
+                            <div class="cell user">
+                                <img src="https://ui-avatars.com/api/?name=R&background=random" alt="Avatar">
+                                <span>Ramis Eray Altıntaş</span>
+                            </div>
+                            <div class="cell matches">345</div>
+                            <div class="cell success">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 74%">74%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="cell rank">9</div>
+                            <div class="cell user">
+                                <img src="https://ui-avatars.com/api/?name=K&background=random" alt="Avatar">
+                                <span>Kemal Özbay</span>
+                            </div>
+                            <div class="cell matches">267</div>
+                            <div class="cell success">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 72%">72%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="cell rank">10</div>
+                            <div class="cell user">
+                                <img src="https://ui-avatars.com/api/?name=J&background=random" alt="Avatar">
+                                <span>JackpotJedi</span>
+                            </div>
+                            <div class="cell matches">198</div>
+                            <div class="cell success">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 70%">70%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 0) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // User menu toggle
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(e) {
+            if (!e.target.matches('.profile-btn') && !e.target.matches('.profile-btn *')) {
+                const menu = document.getElementById('userMenu');
+                if (menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
+        });
+
+        // Moving logos background
+        document.addEventListener('DOMContentLoaded', function() {
+            const movingLogos = document.querySelector('.moving-logos');
+            const teamLogos = [
+                'https://media-4.api-sports.io/football/teams/40.png',  // Liverpool
+                'https://media-4.api-sports.io/football/teams/33.png',  // Manchester United
+                'https://media-4.api-sports.io/football/teams/42.png',  // Arsenal
+                'https://media-4.api-sports.io/football/teams/49.png',  // Chelsea
+                'https://media-4.api-sports.io/football/teams/50.png',  // Manchester City
+                'https://media-4.api-sports.io/football/teams/47.png',  // Tottenham
+                'https://media-4.api-sports.io/football/teams/541.png', // Real Madrid
+                'https://media-4.api-sports.io/football/teams/529.png', // Barcelona
+                'https://media-4.api-sports.io/football/teams/530.png', // Atletico Madrid
+                'https://media-4.api-sports.io/football/teams/489.png'  // AC Milan
+            ];
+
+            function createLogo(logoUrl) {
+                const logo = document.createElement('img');
+                logo.src = logoUrl;
+                logo.classList.add('logo-item');
+                
+                // Random position
+                logo.style.left = Math.random() * 100 + '%';
+                logo.style.top = Math.random() * 100 + '%';
+                
+                // Random animation delay and duration
+                logo.style.animationDelay = Math.random() * 5 + 's';
+                logo.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                
+                return logo;
+            }
+
+            // Create two instances of each logo
+            teamLogos.forEach(logoUrl => {
+                movingLogos.appendChild(createLogo(logoUrl));
+                movingLogos.appendChild(createLogo(logoUrl));
+            });
+        });
+    </script>
+</body>
+</html>

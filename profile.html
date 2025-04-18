@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchMaster - Profil</title>
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        function handleLogoClick() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'homepage.html';
+            }
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('show');
+        }
+
+        async function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('rememberMe');
+            window.location.href = 'homepage.html';
+        }
+
+        async function loadUserProfile() {
+            try {
+                // Kullanıcı giriş kontrolü
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (!isLoggedIn) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const username = localStorage.getItem('username');
+                const userEmail = localStorage.getItem('userEmail');
+
+                // users.txt'den kullanıcı bilgilerini al
+                const response = await fetch('users.txt');
+                const text = await response.text();
+                const users = JSON.parse(text || '[]');
+
+                // Quiz skorlarını al
+                const quizResponse = await fetch('quiz_scores.txt');
+                const quizText = await quizResponse.text();
+                const quizScores = JSON.parse(quizText || '[]');
+                const userQuizStats = quizScores.find(s => s.username === username) || {
+                    totalScore: 0,
+                    averageScore: 0,
+                    quizzesTaken: 0,
+                    scores: []
+                };
+
+                // Mevcut kullanıcıyı bul
+                const currentUser = users.find(user => user.username === username);
+
+                if (currentUser) {
+                    // Kullanıcı menüsünü güncelle
+                    document.getElementById('username').textContent = currentUser.username;
+                    
+                    // Profil detaylarını güncelle
+                    document.querySelector('.profile-details h1').textContent = currentUser.username;
+                    
+                    // Avatar'ı güncelle
+                    document.querySelector('.profile-avatar img').src = 
+                        `https://ui-avatars.com/api/?name=${currentUser.username}&background=random`;
+                    
+                    // Profil bilgilerini güncelle
+                    document.getElementById('profileUsername').textContent = currentUser.username;
+                    document.getElementById('profileEmail').textContent = currentUser.email;
+                    
+                    // Katılım tarihini formatla ve güncelle
+                    const joinDate = new Date(currentUser.createdAt);
+                    const formattedJoinDate = joinDate.toLocaleDateString('tr-TR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    document.getElementById('joinDate').textContent = formattedJoinDate;
+                    
+                    // Son giriş bilgisini güncelle
+                    const now = new Date();
+                    document.getElementById('lastLogin').textContent = 'Az önce';
+
+                    // Quiz istatistiklerini güncelle
+                    document.querySelector('.profile-stats').innerHTML = `
+                        <span><i class="fas fa-chart-line"></i> ${userQuizStats.quizzesTaken} Quiz</span>
+                        <span><i class="fas fa-bullseye"></i> ${userQuizStats.averageScore}% Başarı</span>
+                        <span><i class="fas fa-trophy"></i> #${localStorage.getItem('userRank') || '-'} Sıralama</span>
+                    `;
+
+                    // Son quiz sonuçlarını göster
+                    const recentScores = document.querySelector('.matches-list');
+                    recentScores.innerHTML = userQuizStats.scores.slice(-3).reverse().map(score => `
+                        <div class="match-item">
+                            <div class="match-header">
+                                <span class="match-date">${new Date(score.date).toLocaleDateString('tr-TR')}</span>
+                                <span class="match-league">Quiz Sonucu</span>
+                            </div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <i class="fas fa-question-circle"></i>
+                                    <span>${score.totalQuestions} Soru</span>
+                                </div>
+                                <div class="match-score">
+                                    <span>${score.correctAnswers}/${score.totalQuestions}</span>
+                                </div>
+                                <div class="team">
+                                    <i class="fas fa-percentage"></i>
+                                    <span>${score.score}%</span>
+                                </div>
+                            </div>
+                            <div class="match-prediction">
+                                <span class="prediction-label">Başarı Oranı:</span>
+                                <div class="prediction-bar">
+                                    <div class="prediction-progress" style="width: ${score.score}%">${score.score}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Profil yüklenirken bir hata oluştu:', error);
+            }
+        }
+
+        // Sayfa yüklendiğinde çalışacak fonksiyonlar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserProfile();
+
+            // Sayfa kaydırma olayını dinle
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Kullanıcı menüsü dışında bir yere tıklandığında menüyü kapat
+            document.addEventListener('click', function(event) {
+                const userMenu = document.getElementById('userMenu');
+                const profileBtn = document.querySelector('.profile-btn');
+                
+                if (!profileBtn.contains(event.target) && !userMenu.contains(event.target)) {
+                    userMenu.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="moving-logos"></div>
+    <nav class="navbar">
+        <div class="container">
+            <!-- Logo -->
+            <div class="logo" onclick="handleLogoClick()" style="cursor: pointer;">
+                <img src="logo.png" alt="MatchMaster Logo">
+                <span>MatchMaster</span>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Takım, lig veya maç ara...">
+            </div>
+
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-menu">
+                    <button class="profile-btn" onclick="toggleUserMenu()">
+                        <span id="username">Kullanıcı</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="profile.html"><i class="fas fa-user"></i> Profil</a>
+                        <a href="quiz.html"><i class="fas fa-question-circle"></i> Quiz</a>
+                        <a href="scoreboard.html"><i class="fas fa-trophy"></i> Skor Tablosu</a>
+                        <a href="favorites.html"><i class="fas fa-star"></i> Favoriler</a>
+                        <a href="settings.html"><i class="fas fa-cog"></i> Ayarlar</a>
+                        <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-cover">
+                    <div class="profile-info">
+                        <div class="profile-avatar">
+                            <img src="https://ui-avatars.com/api/?name=User&background=random" alt="Profile Avatar">
+                        </div>
+                        <div class="profile-details">
+                            <h1>Kullanıcı</h1>
+                            <p class="profile-stats">
+                                <span><i class="fas fa-chart-line"></i> 248 Analiz</span>
+                                <span><i class="fas fa-bullseye"></i> 84.7% Başarı</span>
+                                <span><i class="fas fa-trophy"></i> #12 Sıralama</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <!-- Profile Info Section -->
+                <div class="profile-section-card">
+                    <h2>Profil Bilgileri</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Kullanıcı Adı</label>
+                            <p id="profileUsername">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>E-posta</label>
+                            <p id="profileEmail">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Katılım Tarihi</label>
+                            <p id="joinDate">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Son Giriş</label>
+                            <p id="lastLogin">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Favorites Section -->
+                <div class="favorites-section">
+                    <!-- Favorite Matches -->
+                    <div class="favorites-card">
+                        <h3><i class="fas fa-futbol"></i> Favori Maçlar</h3>
+                        <div class="matches-list">
+                            <div class="match-item">
+                                <div class="match-header">
+                                    <span class="match-date">15 Ocak 2024</span>
+                                    <span class="match-league">Premier League</span>
+                                </div>
+                                <div class="match-teams">
+                                    <div class="team">
+                                        <img src="https://media-4.api-sports.io/football/teams/40.png" alt="Liverpool">
+                                        <span>Liverpool</span>
+                                    </div>
+                                    <div class="match-score">
+                                        <span>3 - 1</span>
+                                    </div>
+                                    <div class="team">
+                                        <img src="https://media-4.api-sports.io/football/teams/50.png" alt="Manchester City">
+                                        <span>Man City</span>
+                                    </div>
+                                </div>
+                                <div class="match-prediction">
+                                    <span class="prediction-label">Tahmin Başarısı:</span>
+                                    <div class="prediction-bar">
+                                        <div class="prediction-progress" style="width: 92%">92%</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="match-item">
+                                <div class="match-header">
+                                    <span class="match-date">12 Ocak 2024</span>
+                                    <span class="match-league">La Liga</span>
+                                </div>
+                                <div class="match-teams">
+                                    <div class="team">
+                                        <img src="https://media-4.api-sports.io/football/teams/541.png" alt="Real Madrid">
+                                        <span>Real Madrid</span>
+                                    </div>
+                                    <div class="match-score">
+                                        <span>2 - 0</span>
+                                    </div>
+                                    <div class="team">
+                                        <img src="https://media-4.api-sports.io/football/teams/529.png" alt="Barcelona">
+                                        <span>Barcelona</span>
+                                    </div>
+                                </div>
+                                <div class="match-prediction">
+                                    <span class="prediction-label">Tahmin Başarısı:</span>
+                                    <div class="prediction-bar">
+                                        <div class="prediction-progress" style="width: 88%">88%</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="match-item">
+                                <div class="match-header">
+                                    <span class="match-date">10 Ocak 2024</span>
+                                    <span class="match-league">Premier League</span>
+                                </div>
+                                <div class="match-teams">
+                                    <div class="team">
+                                        <img src="https://media-4.api-sports.io/football/teams/42.png" alt="Arsenal">
+                                        <span>Arsenal</span>
+                                    </div>
+                                    <div class="match-score">
+                                        <span>1 - 2</span>
+                                    </div>
+                                    <div class="team">
+                                        <img src="https://media-4.api-sports.io/football/teams/33.png" alt="Manchester United">
+                                        <span>Man United</span>
+                                    </div>
+                                </div>
+                                <div class="match-prediction">
+                                    <span class="prediction-label">Tahmin Başarısı:</span>
+                                    <div class="prediction-bar">
+                                        <div class="prediction-progress" style="width: 85%">85%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Favorite News -->
+                    <div class="favorites-card">
+                        <h3><i class="fas fa-newspaper"></i> Favori Haberler</h3>
+                        <div class="news-list">
+                            <div class="news-item">
+                                <img src="https://via.placeholder.com/100x70" alt="News">
+                                <div class="news-content">
+                                    <h4>Premier League'de Şampiyonluk Yarışı Kızışıyor</h4>
+                                    <p>Liverpool ve Manchester City arasındaki...<a href="#">Devamını Oku</a></p>
+                                </div>
+                            </div>
+                            <div class="news-item">
+                                <img src="https://via.placeholder.com/100x70" alt="News">
+                                <div class="news-content">
+                                    <h4>Real Madrid'den Transfer Bombası</h4>
+                                    <p>Yaz transfer döneminde büyük sürpriz...<a href="#">Devamını Oku</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="logo.png" alt="MatchMaster Logo">
+                    MatchMaster
+                </div>
+                <div class="footer-links">
+                    <a href="#">Hakkımızda</a>
+                    <a href="#">İletişim</a>
+                    <a href="#">Gizlilik Politikası</a>
+                    <a href="#">Kullanım Şartları</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 0) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // User menu toggle
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(e) {
+            if (!e.target.matches('.profile-btn') && !e.target.matches('.profile-btn *')) {
+                const menu = document.getElementById('userMenu');
+                if (menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
+        });
+
+        // Moving logos background
+        document.addEventListener('DOMContentLoaded', function() {
+            const teamLogos = [
+                'https://media-4.api-sports.io/football/teams/40.png',  // Liverpool
+                'https://media-4.api-sports.io/football/teams/33.png',  // Manchester United
+                'https://media-4.api-sports.io/football/teams/42.png',  // Arsenal
+                'https://media-4.api-sports.io/football/teams/49.png',  // Chelsea
+                'https://media-4.api-sports.io/football/teams/50.png',  // Manchester City
+                'https://media-4.api-sports.io/football/teams/47.png',  // Tottenham
+                'https://media-4.api-sports.io/football/teams/541.png', // Real Madrid
+                'https://media-4.api-sports.io/football/teams/529.png', // Barcelona
+                'https://media-4.api-sports.io/football/teams/530.png', // Atletico Madrid
+                'https://media-4.api-sports.io/football/teams/489.png'  // AC Milan
+            ];
+
+            const movingLogosContainer = document.querySelector('.moving-logos');
+
+            function createLogo(logoUrl) {
+                const logo = document.createElement('img');
+                logo.src = logoUrl;
+                logo.classList.add('logo-item');
+                
+                // Random position
+                logo.style.left = Math.random() * 100 + '%';
+                logo.style.top = Math.random() * 100 + '%';
+                
+                // Random animation delay and duration
+                logo.style.animationDelay = Math.random() * 5 + 's';
+                logo.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                
+                return logo;
+            }
+
+            // Create two instances of each logo
+            teamLogos.forEach(logoUrl => {
+                movingLogosContainer.appendChild(createLogo(logoUrl));
+                movingLogosContainer.appendChild(createLogo(logoUrl));
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchMaster - Giriş Yap</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        // Form doğrulama fonksiyonları
+        function validateInput(input, rules) {
+            const value = input.value.trim();
+            const inputGroup = input.closest('.input-group');
+            const tooltip = inputGroup.querySelector('.input-tooltip');
+            const validationMessage = inputGroup.querySelector('.validation-message');
+            
+            // Boş alan kontrolü
+            if (!value) {
+                showError(inputGroup, 'Bu alan zorunludur', tooltip, validationMessage);
+                return false;
+            }
+
+            // E-posta formatı kontrolü
+            if (rules.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                showError(inputGroup, 'Geçerli bir e-posta adresi giriniz', tooltip, validationMessage);
+                return false;
+            }
+
+            // Minimum uzunluk kontrolü
+            if (rules.minLength && value.length < rules.minLength) {
+                showError(inputGroup, `En az ${rules.minLength} karakter giriniz`, tooltip, validationMessage);
+                return false;
+            }
+
+            // Başarılı durumu
+            showSuccess(inputGroup, validationMessage);
+            return true;
+        }
+
+        function showError(inputGroup, message, tooltip, validationMessage) {
+            inputGroup.classList.remove('success');
+            inputGroup.classList.add('error');
+            if (tooltip) tooltip.textContent = message;
+            if (validationMessage) {
+                validationMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i>${message}`;
+            }
+        }
+
+        function showSuccess(inputGroup, validationMessage) {
+            inputGroup.classList.remove('error');
+            inputGroup.classList.add('success');
+            if (validationMessage) {
+                validationMessage.innerHTML = `<i class="fas fa-check-circle"></i>Geçerli`;
+            }
+        }
+
+        function resetValidation(inputGroup) {
+            inputGroup.classList.remove('error', 'success');
+        }
+
+        // Mevcut fonksiyonlar
+        function handleLogoClick() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'homepage.html';
+            }
+        }
+
+        let isErrorModalOpen = false;
+        let errorModalCloseTimeout;
+
+        function showError(title, message) {
+            if (isErrorModalOpen) {
+                return; // Eğer zaten bir hata modalı açıksa, yeni bir tane açma
+            }
+
+            // Varolan modalı temizle
+            const existingOverlay = document.querySelector('.error-modal-overlay');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+
+            const overlay = document.createElement('div');
+            overlay.className = 'error-modal-overlay';
+            
+            const modal = document.createElement('div');
+            modal.className = 'error-modal';
+            
+            const closeModalHandler = () => {
+                closeError(overlay);
+            };
+            
+            modal.innerHTML = `
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <button>Tamam</button>
+            `;
+            
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            // Event listener'ları ekle
+            const closeButton = modal.querySelector('button');
+            closeButton.addEventListener('click', closeModalHandler);
+            
+            // Overlay'e tıklama ile kapatma
+            overlay.addEventListener('click', (event) => {
+                if (event.target === overlay) {
+                    closeModalHandler();
+                }
+            });
+            
+            // ESC tuşu ile kapatma
+            const escHandler = (event) => {
+                if (event.key === 'Escape') {
+                    closeModalHandler();
+                }
+            };
+            document.addEventListener('keydown', escHandler);
+            
+            // Modal açıldığında flag'i güncelle
+            isErrorModalOpen = true;
+            
+            // Animasyon için timeout
+            setTimeout(() => {
+                overlay.classList.add('show');
+            }, 10);
+            
+            // Cleanup fonksiyonu
+            overlay.cleanup = () => {
+                closeButton.removeEventListener('click', closeModalHandler);
+                overlay.removeEventListener('click', closeModalHandler);
+                document.removeEventListener('keydown', escHandler);
+            };
+        }
+
+        function closeError(overlay) {
+            if (!isErrorModalOpen || !overlay) return;
+            
+            // Eğer önceki bir timeout varsa temizle
+            if (errorModalCloseTimeout) {
+                clearTimeout(errorModalCloseTimeout);
+            }
+            
+            overlay.classList.remove('show');
+            
+            // Event listener'ları temizle
+            if (overlay.cleanup) {
+                overlay.cleanup();
+            }
+            
+            // Animasyon tamamlandıktan sonra modalı kaldır
+            errorModalCloseTimeout = setTimeout(() => {
+                overlay.remove();
+                isErrorModalOpen = false;
+                errorModalCloseTimeout = null;
+            }, 300);
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const emailOrUsernameInput = document.getElementById('emailOrUsername');
+            const passwordInput = document.getElementById('password');
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // Form doğrulama
+            const isEmailOrUsernameValid = validateInput(emailOrUsernameInput, {
+                minLength: 3
+            });
+            const isPasswordValid = validateInput(passwordInput, {
+                minLength: 6
+            });
+
+            if (!isEmailOrUsernameValid || !isPasswordValid) {
+                return;
+            }
+
+            try {
+                const response = await fetch('users.txt');
+                const text = await response.text();
+                const users = JSON.parse(text || '[]');
+
+                const user = users.find(u => 
+                    (u.email === emailOrUsernameInput.value || u.username === emailOrUsernameInput.value) && 
+                    u.password === passwordInput.value
+                );
+
+                if (user) {
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('username', user.username);
+                    localStorage.setItem('userEmail', user.email);
+                    
+                    if (rememberMe) {
+                        localStorage.setItem('rememberMe', 'true');
+                        localStorage.setItem('savedEmailOrUsername', emailOrUsernameInput.value);
+                    } else {
+                        localStorage.removeItem('rememberMe');
+                        localStorage.removeItem('savedEmailOrUsername');
+                    }
+
+                    window.location.href = 'index.html';
+                } else {
+                    showError('Giriş Başarısız', 'Kullanıcı adı/E-posta veya şifre hatalı!');
+                }
+            } catch (error) {
+                console.error('Giriş sırasında bir hata oluştu:', error);
+                showError('Sistem Hatası', 'Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+            }
+        }
+
+        // Sayfa yüklendiğinde çalışacak fonksiyonlar
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const rememberMe = localStorage.getItem('rememberMe');
+            
+            if (rememberMe === 'true') {
+                document.getElementById('emailOrUsername').value = localStorage.getItem('savedEmailOrUsername') || '';
+                document.getElementById('rememberMe').checked = true;
+            }
+
+            // Input alanları için event listener'lar
+            const inputs = document.querySelectorAll('.input-group input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    resetValidation(input.closest('.input-group'));
+                });
+            });
+
+            loginForm.addEventListener('submit', handleLogin);
+
+            // ESC tuşu ile modalı kapatma
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeError();
+                }
+            });
+
+            // Modal dışına tıklama ile kapatma
+            document.addEventListener('click', function(event) {
+                const overlay = document.querySelector('.error-modal-overlay');
+                if (overlay && event.target === overlay) {
+                    closeError();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo" onclick="handleLogoClick()" style="cursor: pointer;">
+                <img src="logo.png" alt="MatchMaster Logo">
+                <span>MatchMaster</span>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="moving-logos"></div>
+    
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="logo.png" alt="MatchMaster Logo" class="login-logo">
+                <h2>Giriş Yap</h2>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="emailOrUsername" placeholder="E-posta veya Kullanıcı Adı" required>
+                    <div class="input-tooltip"></div>
+                    <div class="validation-message"></div>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="password" placeholder="Şifre" required>
+                    <div class="input-tooltip"></div>
+                    <div class="validation-message"></div>
+                </div>
+                <div class="remember-forgot">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Beni Hatırla</span>
+                    </label>
+                    <a href="#" class="forgot-password">Şifremi Unuttum</a>
+                </div>
+                <button type="submit" class="login-btn">Giriş Yap</button>
+            </form>
+            <div class="signup-link">
+                Hesabın yok mu? <a href="signup.html">Kayıt Ol</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const teamLogos = [
+                'https://media-4.api-sports.io/football/teams/40.png',  // Liverpool
+                'https://media-4.api-sports.io/football/teams/33.png',  // Manchester United
+                'https://media-4.api-sports.io/football/teams/42.png',  // Arsenal
+                'https://media-4.api-sports.io/football/teams/49.png',  // Chelsea
+                'https://media-4.api-sports.io/football/teams/47.png',  // Tottenham
+                'https://media-4.api-sports.io/football/teams/50.png',  // Manchester City
+                'https://media-4.api-sports.io/football/teams/541.png', // Real Madrid
+                'https://media-4.api-sports.io/football/teams/529.png', // Barcelona
+                'https://media-4.api-sports.io/football/teams/530.png', // Atletico Madrid
+                'https://media-4.api-sports.io/football/teams/496.png', // Juventus
+                'https://media-4.api-sports.io/football/teams/489.png', // Bayern Munich
+                'https://media-4.api-sports.io/football/teams/505.png'  // Inter
+            ];
+
+            const movingLogosContainer = document.querySelector('.moving-logos');
+
+            function createLogo(logoUrl) {
+                const logo = document.createElement('img');
+                logo.src = logoUrl;
+                logo.classList.add('logo-item');
+                
+                // Random position and animation
+                logo.style.left = Math.random() * 100 + 'vw';
+                logo.style.top = Math.random() * 100 + 'vh';
+                logo.style.animationDelay = Math.random() * 5 + 's';
+                logo.style.animationDuration = 15 + Math.random() * 15 + 's';
+                
+                return logo;
+            }
+
+            // Create two instances of each logo
+            teamLogos.forEach(logoUrl => {
+                movingLogosContainer.appendChild(createLogo(logoUrl));
+                movingLogosContainer.appendChild(createLogo(logoUrl));
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchMaster - Skor Tablosu</title>
+    <link rel="stylesheet" href="scoreboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        function handleLogoClick() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'homepage.html';
+            }
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('show');
+        }
+
+        async function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('rememberMe');
+            window.location.href = 'homepage.html';
+        }
+
+        async function loadScoreboard() {
+            try {
+                // Kullanıcı giriş kontrolü
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (!isLoggedIn) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const currentUsername = localStorage.getItem('username');
+                
+                // Quiz skorlarını al
+                const response = await fetch('quiz_scores.txt');
+                const text = await response.text();
+                const scores = JSON.parse(text || '[]');
+
+                // Skorları sırala
+                scores.sort((a, b) => b.totalScore - a.totalScore);
+
+                // Skor tablosunu oluştur
+                const scoreboardContainer = document.querySelector('.scoreboard-list');
+                scoreboardContainer.innerHTML = scores.map((user, index) => `
+                    <div class="scoreboard-item ${user.username === currentUsername ? 'current-user' : ''}">
+                        <div class="rank">
+                            <span class="rank-number">#${index + 1}</span>
+                            ${index < 3 ? `<i class="fas fa-crown rank-${index + 1}"></i>` : ''}
+                        </div>
+                        <div class="user-info">
+                            <img src="https://ui-avatars.com/api/?name=${user.username}&background=random" alt="${user.username}">
+                            <span class="username">${user.username}</span>
+                        </div>
+                        <div class="score-info">
+                            <div class="score-detail">
+                                <i class="fas fa-trophy"></i>
+                                <span>${user.totalScore}</span>
+                            </div>
+                            <div class="score-detail">
+                                <i class="fas fa-chart-line"></i>
+                                <span>${user.averageScore}%</span>
+                            </div>
+                            <div class="score-detail">
+                                <i class="fas fa-tasks"></i>
+                                <span>${user.quizzesTaken}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Kullanıcının sıralamasını bul ve localStorage'a kaydet
+                const userRank = scores.findIndex(user => user.username === currentUsername) + 1;
+                localStorage.setItem('userRank', userRank);
+
+            } catch (error) {
+                console.error('Skor tablosu yüklenirken hata:', error);
+            }
+        }
+
+        // Sayfa yüklendiğinde çalışacak fonksiyonlar
+        document.addEventListener('DOMContentLoaded', function() {
+            const username = localStorage.getItem('username');
+            if (username) {
+                document.getElementById('username').textContent = username;
+            }
+
+            loadScoreboard();
+
+            // Navbar scroll efekti
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="moving-logos"></div>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo" onclick="handleLogoClick()" style="cursor: pointer;">
+                <img src="logo.png" alt="MatchMaster Logo">
+                <span>MatchMaster</span>
+            </div>
+
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Takım, lig veya maç ara...">
+            </div>
+
+            <div class="profile-section">
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-menu">
+                    <button class="profile-btn" onclick="toggleUserMenu()">
+                        <span id="username">Kullanıcı</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="profile.html"><i class="fas fa-user"></i> Profil</a>
+                        <a href="quiz.html"><i class="fas fa-question-circle"></i> Quiz</a>
+                        <a href="scoreboard.html"><i class="fas fa-trophy"></i> Skor Tablosu</a>
+                        <a href="favorites.html"><i class="fas fa-star"></i> Favoriler</a>
+                        <a href="settings.html"><i class="fas fa-cog"></i> Ayarlar</a>
+                        <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="scoreboard-section">
+                <div class="scoreboard-card">
+                    <h2><i class="fas fa-trophy"></i> Skor Tablosu</h2>
+                    <div class="scoreboard-list">
+                        <!-- Skor listesi buraya dinamik olarak eklenecek -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="logo.png" alt="MatchMaster Logo">
+                    MatchMaster
+                </div>
+                <div class="footer-links">
+                    <a href="#">Hakkımızda</a>
+                    <a href="#">İletişim</a>
+                    <a href="#">Gizlilik Politikası</a>
+                    <a href="#">Kullanım Şartları</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const teamLogos = [
+                'https://media-4.api-sports.io/football/teams/40.png',  // Liverpool
+                'https://media-4.api-sports.io/football/teams/33.png',  // Manchester United
+                'https://media-4.api-sports.io/football/teams/42.png',  // Arsenal
+                'https://media-4.api-sports.io/football/teams/49.png',  // Chelsea
+                'https://media-4.api-sports.io/football/teams/50.png',  // Manchester City
+                'https://media-4.api-sports.io/football/teams/47.png',  // Tottenham
+                'https://media-4.api-sports.io/football/teams/541.png', // Real Madrid
+                'https://media-4.api-sports.io/football/teams/529.png', // Barcelona
+                'https://media-4.api-sports.io/football/teams/530.png', // Atletico Madrid
+                'https://media-4.api-sports.io/football/teams/489.png'  // Bayern Munich
+            ];
+
+            const movingLogosContainer = document.querySelector('.moving-logos');
+
+            function createLogo(logoUrl) {
+                const logo = document.createElement('img');
+                logo.src = logoUrl;
+                logo.classList.add('logo-item');
+                
+                logo.style.left = Math.random() * 100 + '%';
+                logo.style.top = Math.random() * 100 + '%';
+                logo.style.animationDelay = Math.random() * 5 + 's';
+                logo.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                
+                return logo;
+            }
+
+            teamLogos.forEach(logoUrl => {
+                movingLogosContainer.appendChild(createLogo(logoUrl));
+                movingLogosContainer.appendChild(createLogo(logoUrl));
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchMaster - Kayıt Ol</title>
+    <link rel="stylesheet" href="signup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        function handleLogoClick() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'homepage.html';
+            }
+        }
+
+        async function handleSignup(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('passwordConfirm').value;
+            const terms = document.getElementById('terms').checked;
+
+            // Validasyonlar
+            if (!username || !email || !password || !passwordConfirm) {
+                alert('Lütfen tüm alanları doldurun!');
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                alert('Şifreler eşleşmiyor!');
+                return;
+            }
+
+            if (!terms) {
+                alert('Kullanım koşullarını kabul etmelisiniz!');
+                return;
+            }
+
+            try {
+                // Kullanıcı bilgilerini users.txt'den oku
+                const response = await fetch('users.txt');
+                const text = await response.text();
+                const users = JSON.parse(text || '[]');
+
+                // E-posta veya kullanıcı adı kontrolü
+                const existingUser = users.find(user => 
+                    user.email === email || user.username === username
+                );
+
+                if (existingUser) {
+                    alert('Bu e-posta veya kullanıcı adı zaten kullanımda!');
+                    return;
+                }
+
+                // Yeni kullanıcıyı ekle
+                const newUser = {
+                    username,
+                    email,
+                    password, // Gerçek uygulamada şifre hashlenmelidir!
+                    createdAt: new Date().toISOString()
+                };
+
+                users.push(newUser);
+
+                // users.txt'yi güncelle
+                const blob = new Blob([JSON.stringify(users, null, 2)], { type: 'text/plain' });
+                const formData = new FormData();
+                formData.append('file', blob, 'users.txt');
+
+                await fetch('/save-users', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                alert('Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz.');
+                window.location.href = 'login.html';
+
+            } catch (error) {
+                console.error('Kayıt sırasında bir hata oluştu:', error);
+                alert('Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('signupForm').addEventListener('submit', handleSignup);
+        });
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo" onclick="handleLogoClick()" style="cursor: pointer;">
+                <img src="logo.png" alt="MatchMaster Logo">
+                <span>MatchMaster</span>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="moving-logos"></div>
+    
+    <div class="signup-container">
+        <div class="signup-box">
+            <div class="signup-header">
+                <img src="logo.png" alt="MatchMaster Logo" class="signup-logo">
+                <h2>Kayıt Ol</h2>
+            </div>
+            <form id="signupForm" class="signup-form">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="Kullanıcı Adı" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="E-posta" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Şifre" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="passwordConfirm" placeholder="Şifre Tekrar" required>
+                </div>
+                <div class="terms">
+                    <label>
+                        <input type="checkbox" id="terms" required>
+                        <span>Kullanım koşullarını ve gizlilik politikasını kabul ediyorum</span>
+                    </label>
+                </div>
+                <button type="submit" class="signup-btn">Kayıt Ol</button>
+            </form>
+            <div class="login-link">
+                Zaten hesabın var mı? <a href="login.html">Giriş Yap</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const teamLogos = [
+                'https://media-4.api-sports.io/football/teams/40.png',  // Liverpool
+                'https://media-4.api-sports.io/football/teams/33.png',  // Manchester United
+                'https://media-4.api-sports.io/football/teams/42.png',  // Arsenal
+                'https://media-4.api-sports.io/football/teams/49.png',  // Chelsea
+                'https://media-4.api-sports.io/football/teams/47.png',  // Tottenham
+                'https://media-4.api-sports.io/football/teams/50.png',  // Manchester City
+                'https://media-4.api-sports.io/football/teams/541.png', // Real Madrid
+                'https://media-4.api-sports.io/football/teams/529.png', // Barcelona
+                'https://media-4.api-sports.io/football/teams/530.png', // Atletico Madrid
+                'https://media-4.api-sports.io/football/teams/496.png', // Juventus
+                'https://media-4.api-sports.io/football/teams/489.png', // Bayern Munich
+                'https://media-4.api-sports.io/football/teams/505.png'  // Inter
+            ];
+
+            const movingLogosContainer = document.querySelector('.moving-logos');
+
+            function createLogo(logoUrl) {
+                const logo = document.createElement('img');
+                logo.src = logoUrl;
+                logo.classList.add('logo-item');
+                
+                // Random position and animation
+                logo.style.left = Math.random() * 100 + 'vw';
+                logo.style.top = Math.random() * 100 + 'vh';
+                logo.style.animationDelay = Math.random() * 5 + 's';
+                logo.style.animationDuration = 15 + Math.random() * 15 + 's';
+                
+                return logo;
+            }
+
+            // Create two instances of each logo
+            teamLogos.forEach(logoUrl => {
+                movingLogosContainer.appendChild(createLogo(logoUrl));
+                movingLogosContainer.appendChild(createLogo(logoUrl));
+            });
+        });
+    </script>
+</body>
+</html> 
